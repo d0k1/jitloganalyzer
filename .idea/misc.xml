@@ -7,9 +7,9 @@
   <component name="EclipseCodeFormatter">
     <option name="defaultSettings" value="true" />
     <option name="formatter" value="ECLIPSE" />
-    <option name="id" value="1464373157109" />
+    <option name="id" value="1463385931074" />
     <option name="name" value="default" />
-    <option name="pathToConfigFileJava" value="$PROJECT_DIR$/../jsflight/efp/jsflight.eclipse.formatter.settings.xml" />
+    <option name="pathToConfigFileJava" value="$USER_HOME$/jsflight/efp/jsflight.eclipse.formatter.settings.xml" />
     <option name="selectedJavaProfile" value="jsflight.style" />
   </component>
   <component name="EntryPointsManager">
