@@ -7,5 +7,7 @@ package com.focusit.jitloganalyzer.tty.model;
  */
 public interface TTYEvent
 {
+    boolean suitable(String line);
+
     void processLine(String line);
 }

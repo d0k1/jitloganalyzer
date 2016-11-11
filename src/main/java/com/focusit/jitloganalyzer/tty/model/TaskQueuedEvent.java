@@ -7,7 +7,7 @@ package com.focusit.jitloganalyzer.tty.model;
  */
 public class TaskQueuedEvent implements TTYEvent
 {
-    public final static String START_TOKEN = "<task_queued";
+    private final static String START_TOKEN = "<task_queued";
 
     private int compileId;
     private String method;
@@ -107,6 +107,12 @@ public class TaskQueuedEvent implements TTYEvent
     public void setHotCount(int hotCount)
     {
         this.hotCount = hotCount;
+    }
+
+    @Override
+    public boolean suitable(String line)
+    {
+        return line.startsWith(START_TOKEN);
     }
 
     @Override

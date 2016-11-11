@@ -9,7 +9,7 @@ package com.focusit.jitloganalyzer.tty.model;
  */
 public class ClassLoadEvent implements TTYEvent
 {
-    public final static String START_TOKEN = "[Loaded";
+    private final static String START_TOKEN = "[Loaded";
 
     private String classname;
     private String jarname;
@@ -35,8 +35,13 @@ public class ClassLoadEvent implements TTYEvent
     }
 
     @Override
+    public boolean suitable(String line)
+    {
+        return line.startsWith(START_TOKEN);
+    }
+
+    @Override
     public void processLine(String line)
     {
-
     }
 }

@@ -6,7 +6,7 @@ package com.focusit.jitloganalyzer.tty.model;
  */
 public class NMethodEvent implements TTYEvent
 {
-    public final static String START_TOKEN = "<nmethod";
+    private final static String START_TOKEN = "<nmethod";
 
     private long compileId;
     private String compiler;
@@ -128,6 +128,12 @@ public class NMethodEvent implements TTYEvent
     public void setStamp(double stamp)
     {
         this.stamp = stamp;
+    }
+
+    @Override
+    public boolean suitable(String line)
+    {
+        return line.startsWith(START_TOKEN);
     }
 
     @Override

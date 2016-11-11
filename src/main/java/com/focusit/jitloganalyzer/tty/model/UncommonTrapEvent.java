@@ -9,7 +9,7 @@ package com.focusit.jitloganalyzer.tty.model;
  */
 public class UncommonTrapEvent implements TTYEvent
 {
-    public final static String START_TOKEN = "<uncommon_trap";
+    private final static String START_TOKEN = "<uncommon_trap";
 
     private long threadId;
     private String reason;
@@ -17,6 +17,12 @@ public class UncommonTrapEvent implements TTYEvent
     private String compiler;
     private int level;
     private double stamp;
+
+    @Override
+    public boolean suitable(String line)
+    {
+        return line.startsWith(START_TOKEN);
+    }
 
     @Override
     public void processLine(String line)

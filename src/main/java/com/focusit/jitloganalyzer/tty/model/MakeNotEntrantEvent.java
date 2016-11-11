@@ -6,7 +6,7 @@ package com.focusit.jitloganalyzer.tty.model;
  */
 public class MakeNotEntrantEvent implements TTYEvent
 {
-    public final static String START_TOKEN = "<make_not_entrant";
+    private final static String START_TOKEN = "<make_not_entrant";
 
     private long threadId;
     private long compileId;
@@ -62,6 +62,12 @@ public class MakeNotEntrantEvent implements TTYEvent
     public void setStamp(double stamp)
     {
         this.stamp = stamp;
+    }
+
+    @Override
+    public boolean suitable(String line)
+    {
+        return line.startsWith(START_TOKEN);
     }
 
     @Override

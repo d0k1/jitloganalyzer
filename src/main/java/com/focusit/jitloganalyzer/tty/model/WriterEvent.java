@@ -6,9 +6,15 @@ package com.focusit.jitloganalyzer.tty.model;
  */
 public class WriterEvent implements TTYEvent
 {
-    public final static String START_TOKEN = "<writer";
+    private final static String START_TOKEN = "<writer";
 
     private long threadId;
+
+    @Override
+    public boolean suitable(String line)
+    {
+        return line.startsWith(START_TOKEN);
+    }
 
     @Override
     public void processLine(String line)
