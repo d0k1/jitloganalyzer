@@ -1,5 +1,8 @@
 package com.focusit.jitloganalyzer.tty.model;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Created by doki on 08.11.16.
  *
@@ -18,6 +21,8 @@ public class TaskQueuedEvent implements TTYEvent
     private double stamp;
     private String comment;
     private int hotCount;
+    private final static Pattern pattern = Pattern.compile(
+            "<task_queued\\s+compile_id='(\\d+)'\\s+method='(.+)?'\\s+bytes='(\\d+)'\\scount='(\\d+)'\\s+iicount='(\\d+)'\\s+level='(\\d+)'\\s+stamp='(.+)?'\\s+comment='(.+)?'\\s+hot_count='(\\d+)'\n");
 
     public int getCompileId()
     {
@@ -118,6 +123,19 @@ public class TaskQueuedEvent implements TTYEvent
     @Override
     public void processLine(String line)
     {
+        Matcher matcher = pattern.matcher(line);
 
+        if (matcher.find())
+        {
+            compileId = Integer.parseInt(matcher.group(1));
+            method = matcher.group(2);
+            bytes = Integer.parseInt(matcher.group(3));
+            count = Integer.parseInt(matcher.group(4));
+            iicount = Integer.parseInt(matcher.group(5));
+            level = Integer.parseInt(matcher.group(6));
+            stamp = Double.parseDouble(matcher.group(7).replace(",", "."));
+            comment = matcher.group(8);
+            hotCount = Integer.parseInt(matcher.group(9));
+        }
     }
 }

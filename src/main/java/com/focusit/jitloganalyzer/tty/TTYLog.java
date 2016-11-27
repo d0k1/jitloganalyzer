@@ -3,11 +3,10 @@ package com.focusit.jitloganalyzer.tty;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
+import com.focusit.jitloganalyzer.tty.model.ClassLoadEvent;
+import com.focusit.jitloganalyzer.tty.model.SweeperEvent;
 import com.focusit.jitloganalyzer.tty.model.TTYEvent;
 import com.focusit.jitloganalyzer.tty.model.TTYEventFactory;
 
@@ -19,6 +18,11 @@ public class TTYLog
     private boolean started = false;
 
     private List<TTYEvent> events = new ArrayList<>();
+    private List<ClassLoadEvent> classLoading = new ArrayList<>();
+    private HashMap<Integer, List<TTYEvent>> jitCompilations = new HashMap<>();
+    private List<SweeperEvent> sweeping = new ArrayList<>();
+    private HashMap<String, List<TTYEvent>> methodEvents = new HashMap<>();
+    private HashMap<String, List<Integer>> methodCompilations = new HashMap<>();
 
     public void parseLog(String filename) throws IOException
     {
@@ -47,6 +51,31 @@ public class TTYLog
 
             }
         }
+    }
+
+    public void fillClassLoading()
+    {
+
+    }
+
+    public void fillJitCompilations()
+    {
+
+    }
+
+    public void fillSweeping()
+    {
+
+    }
+
+    public void fillMethodEvents()
+    {
+
+    }
+
+    public void fillMethodCompilations()
+    {
+
     }
 
     public Collection<TTYEvent> getEventLog()

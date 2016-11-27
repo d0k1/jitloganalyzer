@@ -1,5 +1,8 @@
 package com.focusit.jitloganalyzer.tty.model;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Created by doki on 08.11.16.
  * <make_not_entrant thread='139673278519040' compile_id='4' compiler='C1' level='3' stamp='0,123'/>
@@ -13,6 +16,9 @@ public class MakeNotEntrantEvent implements TTYEvent
     private String compiler;
     private int level;
     private double stamp;
+
+    private final Pattern pattern = Pattern.compile(
+            "<make_not_entrant thread='(\\d+)'\\s+compile_id='(\\d+)'\\s+compiler='(.+)'\\s+level='(\\d+)'\\s+stamp='(.+)'");
 
     public long getThreadId()
     {
@@ -73,6 +79,14 @@ public class MakeNotEntrantEvent implements TTYEvent
     @Override
     public void processLine(String line)
     {
-
+        Matcher matcher = pattern.matcher(line);
+        if (matcher.find())
+        {
+            threadId = Long.parseLong(matcher.group(1));
+            compileId = Long.parseLong(matcher.group(2));
+            compiler = matcher.group(3);
+            level = Integer.parseInt(matcher.group(4));
+            stamp = Double.parseDouble(matcher.group(5).replace(",", "."));
+        }
     }
 }

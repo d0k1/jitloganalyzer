@@ -1,5 +1,8 @@
 package com.focusit.jitloganalyzer.tty.model;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Created by doki on 08.11.16.
  *
@@ -15,8 +18,12 @@ public class UncommonTrapEvent implements TTYEvent
     private String reason;
     private String action;
     private String compiler;
+    private int compileId;
     private int level;
     private double stamp;
+
+    private final static Pattern pattern = Pattern.compile(
+            "uncommon_trap\\s+thread='(\\d+)'\\s+reason='(.+)?'\\s+action='(.+)?'\\s+compile_id='(\\d+)'\\s+compiler='(.+)?'\\s+level='(\\d+)'\\s+stamp='(.+)?'");
 
     @Override
     public boolean suitable(String line)
@@ -27,7 +34,18 @@ public class UncommonTrapEvent implements TTYEvent
     @Override
     public void processLine(String line)
     {
+        Matcher matcher = pattern.matcher(line);
 
+        if (matcher.find())
+        {
+            threadId = Long.parseLong(matcher.group(1));
+            reason = matcher.group(2);
+            action = matcher.group(3);
+            compileId = Integer.parseInt(matcher.group(4));
+            compiler = matcher.group(5);
+            level = Integer.parseInt(matcher.group(6));
+            stamp = Double.parseDouble(matcher.group(7).replace(",", "."));
+        }
     }
 
     public long getThreadId()
@@ -88,5 +106,15 @@ public class UncommonTrapEvent implements TTYEvent
     public void setStamp(double stamp)
     {
         this.stamp = stamp;
+    }
+
+    public int getCompileId()
+    {
+        return compileId;
+    }
+
+    public void setCompileId(int compileId)
+    {
+        this.compileId = compileId;
     }
 }

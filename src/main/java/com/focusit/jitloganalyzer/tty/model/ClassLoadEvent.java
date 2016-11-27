@@ -1,5 +1,8 @@
 package com.focusit.jitloganalyzer.tty.model;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Created by doki on 08.11.16.
  *
@@ -13,6 +16,8 @@ public class ClassLoadEvent implements TTYEvent
 
     private String classname;
     private String jarname;
+
+    private final static Pattern pattern = Pattern.compile("\\[Loaded.(.+).from.(.+)\\]");
 
     public String getClassname()
     {
@@ -43,5 +48,12 @@ public class ClassLoadEvent implements TTYEvent
     @Override
     public void processLine(String line)
     {
+        Matcher matcher = pattern.matcher(line);
+
+        if (matcher.find())
+        {
+            classname = matcher.group(1);
+            jarname = matcher.group(2);
+        }
     }
 }
