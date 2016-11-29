@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  *    <jvms bci='563' method='com/sun/org/apache/xerces/internal/impl/XMLEntityScanner scanLiteral (ILcom/sun/org/apache/xerces/internal/xni/XMLString;)I' bytes='714' count='1086' backedge_count='26662' iicount='1086'/>
  * </uncommon_trap>
  */
-public class UncommonTrapEvent implements TTYEvent
+public class UncommonTrapEvent implements TTYEvent, HasCompileId
 {
     private final static String START_TOKEN = "<uncommon_trap";
 
@@ -18,12 +18,12 @@ public class UncommonTrapEvent implements TTYEvent
     private String reason;
     private String action;
     private String compiler;
-    private int compileId;
+    private long compileId;
     private int level;
     private double stamp;
 
     private final static Pattern pattern = Pattern.compile(
-            "uncommon_trap\\s+thread='(\\d+)'\\s+reason='(.+)?'\\s+action='(.+)?'\\s+compile_id='(\\d+)'\\s+compiler='(.+)?'\\s+level='(\\d+)'\\s+stamp='(.+)?'");
+            "uncommon_trap.+thread='(\\d+)'.+reason='(.+)?'.+action='(.+)?'.+compile_id='(\\d+)'.+compiler='(.+)?'.+level='(\\d+)'.+stamp='(.+)?'");
 
     @Override
     public boolean suitable(String line)
@@ -41,10 +41,14 @@ public class UncommonTrapEvent implements TTYEvent
             threadId = Long.parseLong(matcher.group(1));
             reason = matcher.group(2);
             action = matcher.group(3);
-            compileId = Integer.parseInt(matcher.group(4));
+            compileId = Long.parseLong(matcher.group(4));
             compiler = matcher.group(5);
             level = Integer.parseInt(matcher.group(6));
             stamp = Double.parseDouble(matcher.group(7).replace(",", "."));
+        }
+        else
+        {
+            System.err.println("Caanot find match for '" + line + "' by " + pattern.pattern());
         }
     }
 
@@ -108,7 +112,7 @@ public class UncommonTrapEvent implements TTYEvent
         this.stamp = stamp;
     }
 
-    public int getCompileId()
+    public long getCompileId()
     {
         return compileId;
     }

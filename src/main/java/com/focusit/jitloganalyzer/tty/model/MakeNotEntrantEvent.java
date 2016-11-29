@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
  * Created by doki on 08.11.16.
  * <make_not_entrant thread='139673278519040' compile_id='4' compiler='C1' level='3' stamp='0,123'/>
  */
-public class MakeNotEntrantEvent implements TTYEvent
+public class MakeNotEntrantEvent implements TTYEvent, HasCompileId
 {
     private final static String START_TOKEN = "<make_not_entrant";
 
@@ -18,7 +18,7 @@ public class MakeNotEntrantEvent implements TTYEvent
     private double stamp;
 
     private final Pattern pattern = Pattern.compile(
-            "<make_not_entrant thread='(\\d+)'\\s+compile_id='(\\d+)'\\s+compiler='(.+)'\\s+level='(\\d+)'\\s+stamp='(.+)'");
+            "make_not_entrant thread='(\\d+)'.+compile_id='(\\d+)'.+compiler='(.+)'.+level='(\\d+)'.+stamp='(.+)'");
 
     public long getThreadId()
     {
@@ -87,6 +87,10 @@ public class MakeNotEntrantEvent implements TTYEvent
             compiler = matcher.group(3);
             level = Integer.parseInt(matcher.group(4));
             stamp = Double.parseDouble(matcher.group(5).replace(",", "."));
+        }
+        else
+        {
+            System.err.println("Caanot find match for '" + line + "' by " + pattern.pattern());
         }
     }
 }

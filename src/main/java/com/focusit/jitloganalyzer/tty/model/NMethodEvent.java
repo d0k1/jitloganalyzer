@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
  * Created by doki on 08.11.16.
  * <nmethod compile_id='28' compiler='C1' level='3' entry='0x00007f083d115320' size='1624' address='0x00007f083d115190' relocation_offset='296' insts_offset='400' stub_offset='1136' scopes_data_offset='1320' scopes_pcs_offset='1456' dependencies_offset='1600' nul_chk_table_offset='1608' method='java/lang/String lastIndexOf (II)I' bytes='52' count='175' backedge_count='3909' iicount='175' stamp='0,124'/>
  */
-public class NMethodEvent implements TTYEvent
+public class NMethodEvent implements TTYEvent, HasCompileId
 {
     private final static String START_TOKEN = "<nmethod";
 
@@ -24,7 +24,7 @@ public class NMethodEvent implements TTYEvent
     private double stamp;
 
     private final static Pattern pattern = Pattern.compile(
-            "<nmethod compile_id='(\\d+)'\\s+compiler='(.+)'\\s+level='(\\d+)'\\s+entry='(\\w+)'\\s+size='(\\d+)'\\s+address='(\\w+)'.*\\smethod='(.*)'\\s+bytes='(\\d+)'\\s+count='(\\d+)'.*\\siicount='(\\d+)'\\s+stamp='(.+)'");
+            "nmethod compile_id='(\\d+)'.+compiler='(.+)'.+level='(\\d+)'.+entry='(\\w+)'.+size='(\\d+)'.+address='(\\w+)'.*\\smethod='(.*)'.+bytes='(\\d+)'.+count='(\\d+)'.*.iicount='(\\d+)'.+stamp='(.+)'");
 
     public long getCompileId()
     {
@@ -160,6 +160,10 @@ public class NMethodEvent implements TTYEvent
             count = Integer.parseInt(matcher.group(9));
             iicount = Integer.parseInt(matcher.group(10));
             stamp = Double.parseDouble(matcher.group(11).replace(",", "."));
+        }
+        else
+        {
+            System.err.println("Caanot find match for '" + line + "' by " + pattern.pattern());
         }
     }
 }

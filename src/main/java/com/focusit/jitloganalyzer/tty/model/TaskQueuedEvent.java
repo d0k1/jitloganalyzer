@@ -8,11 +8,11 @@ import java.util.regex.Pattern;
  *
  * <task_queued compile_id='161' method='java/nio/DirectLongBufferU get (I)J' bytes='16' count='256' iicount='256' level='3' stamp='0,201' comment='tiered' hot_count='256'/>
  */
-public class TaskQueuedEvent implements TTYEvent
+public class TaskQueuedEvent implements TTYEvent, HasCompileId
 {
     private final static String START_TOKEN = "<task_queued";
 
-    private int compileId;
+    private long compileId;
     private String method;
     private int bytes;
     private int count;
@@ -22,9 +22,9 @@ public class TaskQueuedEvent implements TTYEvent
     private String comment;
     private int hotCount;
     private final static Pattern pattern = Pattern.compile(
-            "<task_queued\\s+compile_id='(\\d+)'\\s+method='(.+)?'\\s+bytes='(\\d+)'\\scount='(\\d+)'\\s+iicount='(\\d+)'\\s+level='(\\d+)'\\s+stamp='(.+)?'\\s+comment='(.+)?'\\s+hot_count='(\\d+)'\n");
+            "task_queued.+compile_id='(\\d+)'.+method='(.+)?'.+bytes='(\\d+)'.+count='(\\d+)'.+iicount='(\\d+)'.+level='(\\d+)'.+stamp='(.+)?'.+comment='(.+)?'.+hot_count='(\\d+)'");
 
-    public int getCompileId()
+    public long getCompileId()
     {
         return compileId;
     }
@@ -127,7 +127,7 @@ public class TaskQueuedEvent implements TTYEvent
 
         if (matcher.find())
         {
-            compileId = Integer.parseInt(matcher.group(1));
+            compileId = Long.parseLong(matcher.group(1));
             method = matcher.group(2);
             bytes = Integer.parseInt(matcher.group(3));
             count = Integer.parseInt(matcher.group(4));
@@ -136,6 +136,10 @@ public class TaskQueuedEvent implements TTYEvent
             stamp = Double.parseDouble(matcher.group(7).replace(",", "."));
             comment = matcher.group(8);
             hotCount = Integer.parseInt(matcher.group(9));
+        }
+        else
+        {
+            System.err.println("Caanot find match for '" + line + "' by " + pattern.pattern());
         }
     }
 }

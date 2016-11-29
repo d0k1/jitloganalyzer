@@ -5,10 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-import com.focusit.jitloganalyzer.tty.model.ClassLoadEvent;
-import com.focusit.jitloganalyzer.tty.model.SweeperEvent;
-import com.focusit.jitloganalyzer.tty.model.TTYEvent;
-import com.focusit.jitloganalyzer.tty.model.TTYEventFactory;
+import com.focusit.jitloganalyzer.tty.model.*;
 
 /**
  * Created by doki on 08.11.16.
@@ -19,7 +16,7 @@ public class TTYLog
 
     private List<TTYEvent> events = new ArrayList<>();
     private List<ClassLoadEvent> classLoading = new ArrayList<>();
-    private HashMap<Integer, List<TTYEvent>> jitCompilations = new HashMap<>();
+    private HashMap<Long, List<TTYEvent>> jitCompilations = new HashMap<>();
     private List<SweeperEvent> sweeping = new ArrayList<>();
     private HashMap<String, List<TTYEvent>> methodEvents = new HashMap<>();
     private HashMap<String, List<Integer>> methodCompilations = new HashMap<>();
@@ -60,7 +57,18 @@ public class TTYLog
 
     public void fillJitCompilations()
     {
-
+        events.forEach(event -> {
+            if (event instanceof NMethodEvent || event instanceof TaskQueuedEvent || event instanceof UncommonTrapEvent)
+            {
+                HasCompileId hci = (HasCompileId)event;
+                if (jitCompilations.get(hci.getCompileId()) == null)
+                {
+                    jitCompilations.put(hci.getCompileId(), new ArrayList<>());
+                }
+                List<TTYEvent> compilationEvents = jitCompilations.get(hci.getCompileId());
+                compilationEvents.add(event);
+            }
+        });
     }
 
     public void fillSweeping()
@@ -90,6 +98,7 @@ public class TTYLog
         TTYLog log = new TTYLog();
 
         log.parseLog(args[0]);
+        log.fillJitCompilations();
 
         System.out.println("Done. Got " + log.getEventLog().size() + " events");
     }

@@ -20,7 +20,7 @@ public class SweeperEvent implements TTYEvent
     private double stamp;
 
     private final static Pattern pattern = Pattern.compile(
-            "<sweeper\\s+state='(\\w+)'\\s+traversals='(\\d+)'\\s+total.blobs='(\\d+)'\\s+nmethods='(\\d+)'\\s+adapters='(\\d+)'\\s+free.code.cache='(\\d+)'\\s+stamp='(.+)'\n");
+            "sweeper\\s+state='(\\w+)'.+traversals='(\\d+)'\\s+total.blobs='(\\d+)'.+nmethods='(\\d+)'.+adapters='(\\d+)'.+free.code.cache='(\\d+)'.+stamp='(.+)'\n");
 
     public String getState()
     {
@@ -112,6 +112,10 @@ public class SweeperEvent implements TTYEvent
             adapters = Integer.parseInt(matcher.group(5));
             freeCodeCache = Integer.parseInt(matcher.group(6));
             stamp = Double.parseDouble(matcher.group(2).replace(",", "."));
+        }
+        else
+        {
+            System.err.println("Caanot find match for '" + line + "' by " + pattern.pattern());
         }
     }
 }
