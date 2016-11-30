@@ -1,8 +1,5 @@
 package com.focusit.jitloganalyzer.tty.model;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * Created by doki on 08.11.16.
  *
@@ -10,20 +7,9 @@ import java.util.regex.Pattern;
  *    <jvms bci='563' method='com/sun/org/apache/xerces/internal/impl/XMLEntityScanner scanLiteral (ILcom/sun/org/apache/xerces/internal/xni/XMLString;)I' bytes='714' count='1086' backedge_count='26662' iicount='1086'/>
  * </uncommon_trap>
  */
-public class UncommonTrapEvent implements TTYEvent, HasCompileId
+public class UncommonTrapEvent extends AbstractTTYEvent implements TTYEvent, HasCompileId, HasThreadId, HasStamp
 {
     private final static String START_TOKEN = "<uncommon_trap";
-
-    private long threadId;
-    private String reason;
-    private String action;
-    private String compiler;
-    private long compileId;
-    private int level;
-    private double stamp;
-
-    private final static Pattern pattern = Pattern.compile(
-            "uncommon_trap.+thread='(\\d+)'.+reason='(.+)?'.+action='(.+)?'.+compile_id='(\\d+)'.+compiler='(.+)?'.+level='(\\d+)'.+stamp='(.+)?'");
 
     @Override
     public boolean suitable(String line)
@@ -31,94 +17,18 @@ public class UncommonTrapEvent implements TTYEvent, HasCompileId
         return line.startsWith(START_TOKEN);
     }
 
-    @Override
-    public void processLine(String line)
-    {
-        Matcher matcher = pattern.matcher(line);
-
-        if (matcher.find())
-        {
-            threadId = Long.parseLong(matcher.group(1));
-            reason = matcher.group(2);
-            action = matcher.group(3);
-            compileId = Long.parseLong(matcher.group(4));
-            compiler = matcher.group(5);
-            level = Integer.parseInt(matcher.group(6));
-            stamp = Double.parseDouble(matcher.group(7).replace(",", "."));
-        }
-        else
-        {
-            System.err.println("Caanot find match for '" + line + "' by " + pattern.pattern());
-        }
-    }
-
     public long getThreadId()
     {
-        return threadId;
-    }
-
-    public void setThreadId(long threadId)
-    {
-        this.threadId = threadId;
-    }
-
-    public String getReason()
-    {
-        return reason;
-    }
-
-    public void setReason(String reason)
-    {
-        this.reason = reason;
-    }
-
-    public String getAction()
-    {
-        return action;
-    }
-
-    public void setAction(String action)
-    {
-        this.action = action;
-    }
-
-    public String getCompiler()
-    {
-        return compiler;
-    }
-
-    public void setCompiler(String compiler)
-    {
-        this.compiler = compiler;
-    }
-
-    public int getLevel()
-    {
-        return level;
-    }
-
-    public void setLevel(int level)
-    {
-        this.level = level;
+        return Long.parseLong(attributes.get("thread"));
     }
 
     public double getStamp()
     {
-        return stamp;
-    }
-
-    public void setStamp(double stamp)
-    {
-        this.stamp = stamp;
+        return Double.parseDouble(attributes.get("stamp").replace(",", "."));
     }
 
     public long getCompileId()
     {
-        return compileId;
-    }
-
-    public void setCompileId(int compileId)
-    {
-        this.compileId = compileId;
+        return Long.parseLong(attributes.get("compile_id"));
     }
 }

@@ -4,7 +4,7 @@ package com.focusit.jitloganalyzer.tty.model;
  * Created by doki on 08.11.16.
  * <writer thread='139821162608384'/>
  */
-public class WriterEvent implements TTYEvent
+public class WriterEvent extends AbstractTTYEvent implements TTYEvent, HasThreadId
 {
     private final static String START_TOKEN = "<writer";
 

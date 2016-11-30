@@ -14,12 +14,28 @@ public class TTYLog
 {
     private boolean started = false;
 
+    public Map<Class, Set<String>> attrsByType = new HashMap<>();
+
     private List<TTYEvent> events = new ArrayList<>();
     private List<ClassLoadEvent> classLoading = new ArrayList<>();
     private HashMap<Long, List<TTYEvent>> jitCompilations = new HashMap<>();
     private List<SweeperEvent> sweeping = new ArrayList<>();
-    private HashMap<String, List<TTYEvent>> methodEvents = new HashMap<>();
-    private HashMap<String, List<Integer>> methodCompilations = new HashMap<>();
+    private HashMap<String, List<Long>> methodCompilations = new HashMap<>();
+
+    private Comparator<TTYEvent> ttyEventComparatorByStamp = (o1, o2) -> {
+        if (o1 instanceof HasStamp && o2 instanceof HasStamp)
+        {
+            double diff = (((HasStamp)o2).getStamp() - ((HasStamp)o1).getStamp());
+            int result = 0;
+            if (diff > 0)
+                result = 1;
+            if (diff < 0)
+                result = -1;
+
+            return result;
+        }
+        return -1;
+    };
 
     public void parseLog(String filename) throws IOException
     {
@@ -38,6 +54,16 @@ public class TTYLog
                 if (event != null)
                 {
                     event.processLine(line);
+                    if (event instanceof AbstractTTYEvent)
+                    {
+                        Set<String> attrs = attrsByType.get(event.getClass());
+                        if (attrs == null)
+                        {
+                            attrs = new HashSet<>();
+                            attrsByType.put(event.getClass(), attrs);
+                        }
+                        attrs.addAll(((AbstractTTYEvent)event).getAttributes(line).keySet());
+                    }
                     events.add(event);
                 }
 
@@ -52,7 +78,14 @@ public class TTYLog
 
     public void fillClassLoading()
     {
+        events.forEach(event -> {
+            if (event instanceof ClassLoadEvent)
+            {
+                classLoading.add((ClassLoadEvent)event);
+            }
+        });
 
+        classLoading.sort(ttyEventComparatorByStamp);
     }
 
     public void fillJitCompilations()
@@ -67,23 +100,37 @@ public class TTYLog
                 }
                 List<TTYEvent> compilationEvents = jitCompilations.get(hci.getCompileId());
                 compilationEvents.add(event);
+                compilationEvents.sort(ttyEventComparatorByStamp);
             }
         });
     }
 
     public void fillSweeping()
     {
-
-    }
-
-    public void fillMethodEvents()
-    {
-
+        events.forEach(event -> {
+            if (event instanceof SweeperEvent)
+            {
+                sweeping.add((SweeperEvent)event);
+            }
+        });
+        sweeping.sort(ttyEventComparatorByStamp);
     }
 
     public void fillMethodCompilations()
     {
-
+        events.forEach(event -> {
+            if (event instanceof TaskQueuedEvent)
+            {
+                String method = ((HasMethod)event).getMethod();
+                List<Long> compilations = methodCompilations.get(method);
+                if (compilations == null)
+                {
+                    compilations = new ArrayList<>();
+                    methodCompilations.put(method, compilations);
+                }
+                compilations.add(((HasCompileId)event).getCompileId());
+            }
+        });
     }
 
     public Collection<TTYEvent> getEventLog()
@@ -98,6 +145,9 @@ public class TTYLog
         TTYLog log = new TTYLog();
 
         log.parseLog(args[0]);
+        log.fillClassLoading();
+        log.fillSweeping();
+        log.fillMethodCompilations();
         log.fillJitCompilations();
 
         System.out.println("Done. Got " + log.getEventLog().size() + " events");

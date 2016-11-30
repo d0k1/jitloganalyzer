@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  * [Loaded sun.reflect.MagicAccessorImpl from /opt/jdk1.8.0_60/jre/lib/rt.jar]
  *
  */
-public class ClassLoadEvent implements TTYEvent
+public class ClassLoadEvent extends AbstractTTYEvent
 {
     private final static String START_TOKEN = "[Loaded";
 
