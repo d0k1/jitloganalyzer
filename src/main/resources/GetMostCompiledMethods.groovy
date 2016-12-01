@@ -17,8 +17,8 @@ def result = [:]
 def filter = "ru/naumen"
 
 methodCompilations.each { entry ->
-    if (entry.getKey().startsWith(filter)) {
-        result.put(entry.getKey(), entry.getValue());
+    if (entry.getKey().startsWith(filter) && entry.getValue().size() > 4) {
+        result.put(entry.getKey(), entry.getValue())
     }
 }
 

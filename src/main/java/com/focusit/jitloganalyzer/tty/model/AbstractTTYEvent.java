@@ -63,4 +63,11 @@ public abstract class AbstractTTYEvent implements TTYEvent {
     public void processLine(String line) {
         this.attributes = getAttributes(line);
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "{" +
+                "attributes=" + attributes +
+                '}';
+    }
 }

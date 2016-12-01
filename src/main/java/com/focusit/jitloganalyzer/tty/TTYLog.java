@@ -22,14 +22,14 @@ public class TTYLog {
     private List<SweeperEvent> sweeping = new ArrayList<>();
     private HashMap<String, List<Long>> methodCompilations = new HashMap<>();
 
-    private Comparator<TTYEvent> ttyEventComparatorByStamp = (o1, o2) -> {
+    private Comparator<TTYEvent> ttyEventComparatorByStampAsc = (o1, o2) -> {
         if (o1 instanceof HasStamp && o2 instanceof HasStamp) {
             double diff = (((HasStamp) o2).getStamp() - ((HasStamp) o1).getStamp());
             int result = 0;
             if (diff > 0)
-                result = 1;
-            if (diff < 0)
                 result = -1;
+            if (diff < 0)
+                result = +1;
 
             return result;
         }
@@ -77,20 +77,20 @@ public class TTYLog {
             }
         });
 
-        classLoading.sort(ttyEventComparatorByStamp);
+        classLoading.sort(ttyEventComparatorByStampAsc);
     }
 
     public void fillJitCompilations() {
         jitCompilations.clear();
         events.forEach(event -> {
-            if (event instanceof NMethodEvent || event instanceof TaskQueuedEvent || event instanceof UncommonTrapEvent) {
+            if (event instanceof NMethodEvent || event instanceof TaskQueuedEvent || event instanceof UncommonTrapEvent || event instanceof MakeNotEntrantEvent) {
                 HasCompileId hci = (HasCompileId) event;
                 if (jitCompilations.get(hci.getCompileId()) == null) {
                     jitCompilations.put(hci.getCompileId(), new ArrayList<>());
                 }
                 List<TTYEvent> compilationEvents = jitCompilations.get(hci.getCompileId());
                 compilationEvents.add(event);
-                compilationEvents.sort(ttyEventComparatorByStamp);
+                compilationEvents.sort(ttyEventComparatorByStampAsc);
             }
         });
     }
@@ -102,7 +102,7 @@ public class TTYLog {
                 sweeping.add((SweeperEvent) event);
             }
         });
-        sweeping.sort(ttyEventComparatorByStamp);
+        sweeping.sort(ttyEventComparatorByStampAsc);
     }
 
     public void fillMethodCompilations() {
