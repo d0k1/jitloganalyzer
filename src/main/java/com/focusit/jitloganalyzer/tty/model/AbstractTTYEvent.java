@@ -1,20 +1,14 @@
 package com.focusit.jitloganalyzer.tty.model;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by dkirpichenkov on 30.11.16.
  */
-public abstract class AbstractTTYEvent implements TTYEvent
-{
+public abstract class AbstractTTYEvent implements TTYEvent {
     protected Map<String, String> attributes = new HashMap<>();
 
-    Pattern pattern = Pattern.compile("(.+)?='(.*)?'");
-
-    public Map<String, String> getAttributes(String line)
-    {
+    public Map<String, String> getAttributes(String line) {
         line = line.replace("<", "");
         line = line.replace("/>", "");
         line = line.replace(">", "");
@@ -25,24 +19,17 @@ public abstract class AbstractTTYEvent implements TTYEvent
 
         List<String> attr = new ArrayList<>();
 
-        while (!list.isEmpty())
-        {
+        while (!list.isEmpty()) {
             String item = list.get(0);
-            Matcher matcher = pattern.matcher(item);
-            if (matcher.find())
-            {
+            if (item.endsWith("'")) {
                 attr.add(item);
                 list.remove(item);
-            }
-            else
-            {
+            } else {
                 int pos = 0;
                 list.remove(item);
-                while (!matcher.find() && !list.isEmpty())
-                {
+                while (!item.endsWith("'") && !list.isEmpty()) {
                     item += " " + list.get(pos);
                     list.remove(0);
-                    matcher = pattern.matcher(item);
                 }
                 attr.add(item);
             }
@@ -56,29 +43,24 @@ public abstract class AbstractTTYEvent implements TTYEvent
         return map;
     }
 
-    private String sanitizeValue(String value)
-    {
+    private String sanitizeValue(String value) {
         String result = value;
-        if (result.startsWith("'"))
-        {
+        if (result.startsWith("'")) {
             result = result.substring(1);
         }
 
-        if (result.endsWith("'"))
-        {
+        if (result.endsWith("'")) {
             result = result.substring(0, result.length() - 1);
         }
         return result;
     }
 
-    private String sanitizeAttr(String attr)
-    {
+    private String sanitizeAttr(String attr) {
         return attr;
     }
 
     @Override
-    public void processLine(String line)
-    {
+    public void processLine(String line) {
         this.attributes = getAttributes(line);
     }
 }
