@@ -30,7 +30,6 @@ TTYLog parses this tty part of compilation log, and provides data for further an
 ## Experiments
 
 This repository has some examples to study JIT's behaviour with this analyzer.
-And this repository has some JMH benchmarks based on examples to check out if JIT optimizations matters.
 
 ## JMH Benchmarks
 
