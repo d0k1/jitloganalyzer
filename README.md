@@ -13,7 +13,7 @@ Reasons that lead me to make this project:
 This tool is Java8 compatible. I don't know how it would work with any other java's compilation log.
 
 ## JIT's Log
-Java's compilation log consists of two parts: tty (which is for save just event log), compilation_log ()which is detailed explanations of JIT's decisions).
+Java's compilation log consists of two parts: tty (which is for say just event log), compilation_log (which is detailed explanations of JIT's decisions).
  
 The first part, tty, describes application state in common:
 
@@ -32,3 +32,6 @@ TTYLog parses this tty part of compilation log, and provides data for further an
 This repository has some examples to study JIT's behaviour with this analyzer.
 And this repository has some JMH benchmarks based on examples to check out if JIT optimizations matters.
 
+## JMH Benchmarks
+
+To test optimizations for experiments I used JMH benchmarks. They located in corresponding module
