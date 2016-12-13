@@ -3,9 +3,6 @@ package com.focusit.experiments.uuidgenerator;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Do not forget to add important arguments to JVM:
- * -XX:+UnlockDiagnosticVMOptions -XX:+TraceClassLoading -XX:+LogCompilation -XX:LogFile=./experiment_uuid01.log
- *
  * Created by doki on 12.12.16.
  */
 public class UUIDGenerator

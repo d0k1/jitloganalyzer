@@ -2,6 +2,8 @@ package com.focusit.experiments.uuidgenerator;
 
 /**
  * Created by doki on 12.12.16.
+ * Do not forget to add important arguments to JVM:
+ * -XX:+UnlockDiagnosticVMOptions -XX:+TraceClassLoading -XX:+LogCompilation -XX:LogFile=./experiment_uuid01.log
  */
 public class ExperimentUUID
 {
