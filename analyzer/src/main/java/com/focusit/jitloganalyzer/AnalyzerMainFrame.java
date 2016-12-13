@@ -1,4 +1,4 @@
-package com.focusit.jitloganalyzer.tty;
+package com.focusit.jitloganalyzer;
 
 import java.awt.*;
 import java.io.PrintWriter;
@@ -25,7 +25,7 @@ import groovy.lang.Script;
 /**
  * Created by dkirpichenkov on 30.11.16.
  */
-public class TTYLogFrame extends JFrame
+public class AnalyzerMainFrame extends JFrame
 {
     private JPanel rootPanel;
     private JButton runButton;
@@ -44,7 +44,7 @@ public class TTYLogFrame extends JFrame
     private HashMap<String, List<Long>> methodCompilations;
     private Function<Void, Void> parseFunction;
 
-    public TTYLogFrame(java.util.List<TTYEvent> events, List<ClassLoadEvent> classLoading,
+    public AnalyzerMainFrame(java.util.List<TTYEvent> events, List<ClassLoadEvent> classLoading,
             HashMap<Long, List<TTYEvent>> jitCompilations, List<SweeperEvent> sweeping,
             HashMap<String, List<Long>> methodCompilations, Function<Void, Void> parseFunction) throws HeadlessException
     {

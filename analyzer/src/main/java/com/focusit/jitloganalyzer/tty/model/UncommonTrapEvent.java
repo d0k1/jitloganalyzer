@@ -1,5 +1,8 @@
 package com.focusit.jitloganalyzer.tty.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by doki on 08.11.16.
  *
@@ -11,6 +14,17 @@ public class UncommonTrapEvent extends AbstractTTYEvent implements TTYEvent, Has
 {
     private final static String START_TOKEN = "<uncommon_trap";
 
+    public void addJVMS(JVMSEvent e)
+    {
+        List<JVMSEvent> events = (List<JVMSEvent>)attributes.get("jvms");
+        if (events == null)
+        {
+            events = new ArrayList<>();
+            attributes.put("jvms", events);
+        }
+        events.add(e);
+    }
+
     @Override
     public boolean suitable(String line)
     {
@@ -19,16 +33,11 @@ public class UncommonTrapEvent extends AbstractTTYEvent implements TTYEvent, Has
 
     public long getThreadId()
     {
-        return Long.parseLong(attributes.get("thread"));
-    }
-
-    public double getStamp()
-    {
-        return Double.parseDouble(attributes.get("stamp").replace(",", "."));
+        return Long.parseLong((String)attributes.get("thread"));
     }
 
     public long getCompileId()
     {
-        return Long.parseLong(attributes.get("compile_id"));
+        return Long.parseLong((String)attributes.get("compile_id"));
     }
 }

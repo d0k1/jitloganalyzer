@@ -8,11 +8,6 @@ public class SweeperEvent extends AbstractTTYEvent implements TTYEvent, HasStamp
 {
     private final static String START_TOKEN = "<sweeper";
 
-    public double getStamp()
-    {
-        return Double.parseDouble(attributes.get("stamp").replace(",", "."));
-    }
-
     @Override
     public boolean suitable(String line)
     {

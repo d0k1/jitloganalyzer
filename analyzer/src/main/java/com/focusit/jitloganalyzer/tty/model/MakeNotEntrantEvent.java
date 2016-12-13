@@ -11,22 +11,17 @@ public class MakeNotEntrantEvent extends AbstractTTYEvent
 
     public long getThreadId()
     {
-        return Long.parseLong(attributes.get("thread"));
+        return Long.parseLong((String)attributes.get("thread"));
     }
 
     public long getCompileId()
     {
-        return Long.parseLong(attributes.get("compile_id"));
+        return Long.parseLong((String)attributes.get("compile_id"));
     }
 
     public String getCompiler()
     {
-        return attributes.get("compiler");
-    }
-
-    public double getStamp()
-    {
-        return Double.parseDouble(attributes.get("stamp").replace(",", "."));
+        return (String)attributes.get("compiler");
     }
 
     @Override

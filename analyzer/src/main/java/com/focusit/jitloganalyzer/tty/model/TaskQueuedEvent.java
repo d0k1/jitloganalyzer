@@ -11,12 +11,7 @@ public class TaskQueuedEvent extends AbstractTTYEvent implements TTYEvent, HasCo
 
     public long getCompileId()
     {
-        return Long.parseLong(attributes.get("compile_id"));
-    }
-
-    public double getStamp()
-    {
-        return Double.parseDouble(attributes.get("stamp").replace(",", "."));
+        return Long.parseLong((String)attributes.get("compile_id"));
     }
 
     @Override
@@ -27,6 +22,6 @@ public class TaskQueuedEvent extends AbstractTTYEvent implements TTYEvent, HasCo
 
     public String getMethod()
     {
-        return attributes.get("method");
+        return (String)attributes.get("method");
     }
 }

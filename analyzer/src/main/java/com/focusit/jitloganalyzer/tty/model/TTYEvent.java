@@ -10,4 +10,6 @@ public interface TTYEvent
     boolean suitable(String line);
 
     void processLine(String line);
+
+    void setPreviousEvent(TTYEvent event);
 }

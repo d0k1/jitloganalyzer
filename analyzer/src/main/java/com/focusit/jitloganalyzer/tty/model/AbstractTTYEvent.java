@@ -7,14 +7,25 @@ import java.util.*;
  */
 public abstract class AbstractTTYEvent implements TTYEvent
 {
-    protected Map<String, String> attributes = new HashMap<>();
+    protected Map<String, Object> attributes = new HashMap<>();
 
-    public Map<String, String> getAttributes(String line)
+    @Override
+    public void setPreviousEvent(TTYEvent event)
+    {
+
+    }
+
+    public double getStamp()
+    {
+        return Double.parseDouble(((String)attributes.get("stamp")).replace(",", "."));
+    }
+
+    public Map<String, Object> getAttributes(String line)
     {
         line = line.replace("<", "");
         line = line.replace("/>", "");
         line = line.replace(">", "");
-        HashMap<String, String> map = new HashMap<>();
+        HashMap<String, Object> map = new HashMap<>();
 
         List<String> list = new ArrayList<>(Arrays.asList(line.split(" ")));
         list.remove(0);

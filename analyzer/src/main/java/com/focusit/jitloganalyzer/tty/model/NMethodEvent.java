@@ -10,17 +10,12 @@ public class NMethodEvent extends AbstractTTYEvent implements TTYEvent, HasCompi
 
     public long getCompileId()
     {
-        return Long.parseLong(attributes.get("compile_id"));
+        return Long.parseLong((String)attributes.get("compile_id"));
     }
 
     public String getCompiler()
     {
-        return attributes.get("compiler");
-    }
-
-    public double getStamp()
-    {
-        return Double.parseDouble(attributes.get("stamp").replace(",", "."));
+        return (String)attributes.get("compiler");
     }
 
     @Override
@@ -31,7 +26,7 @@ public class NMethodEvent extends AbstractTTYEvent implements TTYEvent, HasCompi
 
     public String getMethod()
     {
-        return attributes.get("method");
+        return (String)attributes.get("method");
     }
 
 }

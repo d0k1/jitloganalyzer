@@ -5,8 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-import javax.swing.*;
-
 import com.focusit.jitloganalyzer.tty.model.*;
 
 /**
@@ -15,13 +13,12 @@ import com.focusit.jitloganalyzer.tty.model.*;
 public class TTYLog
 {
     public Map<Class, Set<String>> attrsByType = new HashMap<>();
+    public List<TTYEvent> events = new ArrayList<>();
+    public List<ClassLoadEvent> classLoading = new ArrayList<>();
+    public HashMap<Long, List<TTYEvent>> jitCompilations = new HashMap<>();
+    public List<SweeperEvent> sweeping = new ArrayList<>();
+    public HashMap<String, List<Long>> methodCompilations = new HashMap<>();
     private boolean started = false;
-    private List<TTYEvent> events = new ArrayList<>();
-    private List<ClassLoadEvent> classLoading = new ArrayList<>();
-    private HashMap<Long, List<TTYEvent>> jitCompilations = new HashMap<>();
-    private List<SweeperEvent> sweeping = new ArrayList<>();
-    private HashMap<String, List<Long>> methodCompilations = new HashMap<>();
-
     private Comparator<TTYEvent> ttyEventComparatorByStampAsc = (o1, o2) -> {
         if (o1 instanceof HasStamp && o2 instanceof HasStamp)
         {
@@ -37,36 +34,13 @@ public class TTYLog
         return -1;
     };
 
-    public static void main(String[] args) throws IOException
-    {
-        System.out.println("JIT LOG TTY Events");
-
-        TTYLog log = new TTYLog();
-
-        SwingUtilities.invokeLater(() -> new TTYLogFrame(log.events, log.classLoading, log.jitCompilations,
-                log.sweeping, log.methodCompilations, aVoid -> {
-                    try
-                    {
-                        log.parseLog(args[0]);
-                        log.fillClassLoading();
-                        log.fillSweeping();
-                        log.fillMethodCompilations();
-                        log.fillJitCompilations();
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-                    return null;
-                }));
-    }
-
     public void parseLog(String filename) throws IOException
     {
         events.clear();
         attrsByType.clear();
         try (BufferedReader br = new BufferedReader(new FileReader(filename)))
         {
+            TTYEvent prevEvent = null;
             for (String line; (line = br.readLine()) != null;)
             {
                 if (!started && line.toLowerCase().equals("<tty>"))
@@ -80,6 +54,10 @@ public class TTYLog
                 if (event != null)
                 {
                     event.processLine(line);
+                    if (prevEvent != null)
+                    {
+                        event.setPreviousEvent(prevEvent);
+                    }
                     if (event instanceof AbstractTTYEvent)
                     {
                         Set<String> attrs = attrsByType.get(event.getClass());
@@ -91,6 +69,7 @@ public class TTYLog
                         attrs.addAll(((AbstractTTYEvent)event).getAttributes(line).keySet());
                     }
                     events.add(event);
+                    prevEvent = event;
                 }
 
                 if (started && line.toLowerCase().equals("</tty>"))
