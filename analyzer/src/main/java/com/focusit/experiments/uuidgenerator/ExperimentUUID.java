@@ -9,7 +9,8 @@ public class ExperimentUUID
 {
     public static void main(String[] args)
     {
-        UUIDGenerator2 generator = UUIDGenerator2.get();
+        UUIDGenerator3 generator = UUIDGenerator3.get();
+        //        UUIDGenerator2 generator = UUIDGenerator2.get();
         //        UUIDGenerator generator = UUIDGenerator.get();
         int retVal = 0;
         String ideal = "0000";

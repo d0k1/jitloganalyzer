@@ -1,6 +1,7 @@
 package com.focusit.jitloganalyzer;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
@@ -27,10 +28,10 @@ public class App
                     try
                     {
                         tty.parseLog(args[0]);
-                        tty.fillClassLoading();
-                        tty.fillSweeping();
-                        tty.fillMethodCompilations();
-                        tty.fillJitCompilations();
+                        CompletableFuture.allOf(CompletableFuture.runAsync(tty::fillClassLoading),
+                                CompletableFuture.runAsync(tty::fillSweeping),
+                                CompletableFuture.runAsync(tty::fillMethodCompilations),
+                                CompletableFuture.runAsync(tty::fillJitCompilations));
                     }
                     catch (IOException e)
                     {
