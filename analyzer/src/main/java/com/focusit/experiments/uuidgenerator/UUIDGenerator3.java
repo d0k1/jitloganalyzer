@@ -9,6 +9,7 @@ public class UUIDGenerator3
 {
     private static final boolean isGWT;
     private static final UUIDGenerator3 INSTANCE;
+    private static final String ZEROS = "0000000000000000";
 
     static
     {
@@ -24,7 +25,7 @@ public class UUIDGenerator3
     {
         if (isGWT)
         {
-            random = format((long)(Math.floor(Math.random() * 4294967296L) - 2147483648L), 12);
+            random = null;
         }
         else
         {
@@ -95,8 +96,7 @@ public class UUIDGenerator3
 
     private char[] format(long value, int length)
     {
-        char strValue[] = getStrValue(value, length);
-        return fillValue(length, strValue);
+        return fillValue(length, getStrValue(value, length));
     }
 
     private char[] fillValue(int length, char[] strValue)
@@ -108,16 +108,7 @@ public class UUIDGenerator3
 
     private char[] getStrValue(long value, int length)
     {
-        char[] strValue;
-        if (isGWT)
-        {
-            strValue = format_JS(value, length);
-        }
-        else
-        {
-            strValue = longAsString(value);
-        }
-        return strValue;
+        return longAsString(value);
     }
 
     private char[] longAsString(long val)
@@ -133,14 +124,6 @@ public class UUIDGenerator3
             result[15 - i] = digits[pos];
         }
         return result;
-    }
-
-    private char[] format_JS(long value, int length)
-    {
-        String strValue;
-        strValue = String.valueOf(value > 0 ? value : Math.abs(value + 1));
-        strValue = strValue.substring(0, Math.min(length, strValue.length()));
-        return strValue.toCharArray();
     }
 
     private String nextUUID_JS()
