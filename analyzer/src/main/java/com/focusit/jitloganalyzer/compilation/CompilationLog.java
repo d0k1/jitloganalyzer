@@ -24,9 +24,9 @@ public class CompilationLog
     public static final String TOKEN_TASK_START = "<task ";
     public static final String TOKEN_TASK_STOP = "</task>";
     private final Pattern pattern = Pattern.compile("compile_id='(\\d+)'");
-    Map<Long, CompilerTask> compilerTasks = new ConcurrentHashMap<>();
-    ConcurrentHashMap<CompletableFuture, Object> futures = new ConcurrentHashMap<>();
-    ConcurrentHashMap<CompletableFuture, Object> innerFutures = new ConcurrentHashMap<>();
+    private Map<Long, CompilerTask> compilerTasks = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<CompletableFuture, Object> futures = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<CompletableFuture, Object> innerFutures = new ConcurrentHashMap<>();
 
     private long getTaskCompileId(String taskThread)
     {
@@ -80,7 +80,23 @@ public class CompilationLog
     private void computeCompilerTask(CompilerParser parser, List<String> taskContent, long compileId)
     {
         innerFutures.put(CompletableFuture.runAsync(() -> {
-            CompilerTask task = parser.getCompilerTask(compileId, taskContent);
+            CompilerTask task = null;
+            try
+            {
+                task = parser.getCompilerTask(compileId, taskContent);
+            }
+            catch (ParserConfigurationException e)
+            {
+                e.printStackTrace();
+            }
+            catch (SAXException e)
+            {
+                e.printStackTrace();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
             compilerTasks.put(compileId, task);
         }), new Object());
     }
@@ -93,7 +109,7 @@ public class CompilationLog
         boolean c1log = false;
         boolean c2log = false;
 
-        try (BufferedReader br = new BufferedReader(new FileReader(filename)))
+        try (BufferedReader br = new BufferedReader(new FileReader(filename), 64 * 1024 * 1024))
         {
             for (String line; (line = br.readLine()) != null;)
             {
@@ -167,5 +183,10 @@ public class CompilationLog
                 e.printStackTrace();
             }
         });
+    }
+
+    public CompilerTask get(long id)
+    {
+        return compilerTasks.get(id);
     }
 }

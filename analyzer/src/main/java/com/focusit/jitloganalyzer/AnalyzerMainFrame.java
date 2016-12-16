@@ -14,6 +14,7 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
+import com.focusit.jitloganalyzer.compilation.CompilationLog;
 import com.focusit.jitloganalyzer.tty.model.ClassLoadEvent;
 import com.focusit.jitloganalyzer.tty.model.SweeperEvent;
 import com.focusit.jitloganalyzer.tty.model.TTYEvent;
@@ -27,6 +28,7 @@ import groovy.lang.Script;
  */
 public class AnalyzerMainFrame extends JFrame
 {
+    private CompilationLog compilerLog;
     private JPanel rootPanel;
     private JButton runButton;
     private org.fife.ui.rsyntaxtextarea.RSyntaxTextArea textArea1;
@@ -46,9 +48,11 @@ public class AnalyzerMainFrame extends JFrame
 
     public AnalyzerMainFrame(java.util.List<TTYEvent> events, List<ClassLoadEvent> classLoading,
             HashMap<Long, List<TTYEvent>> jitCompilations, List<SweeperEvent> sweeping,
-            HashMap<String, List<Long>> methodCompilations, Function<Void, Void> parseFunction) throws HeadlessException
+            HashMap<String, List<Long>> methodCompilations, CompilationLog compilerLog,
+            Function<Void, Void> parseFunction) throws HeadlessException
     {
         super("Jitloganalyzer: TTY");
+        this.compilerLog = compilerLog;
         this.events = events;
         this.classLoading = classLoading;
         this.jitCompilations = jitCompilations;
@@ -67,9 +71,10 @@ public class AnalyzerMainFrame extends JFrame
             Binding binding = new Binding();
             binding.setVariable("ttylog", events);
             binding.setVariable("classloading", classLoading);
-            binding.setVariable("jitcompilations", jitCompilations);
+            binding.setVariable("compilations", jitCompilations);
             binding.setVariable("sweeping", sweeping);
             binding.setVariable("methodCompilations", methodCompilations);
+            binding.setVariable("compilerLog", compilerLog);
             Script script = shell.parse(textArea1.getText());
             script.setBinding(binding);
             try
@@ -113,5 +118,10 @@ public class AnalyzerMainFrame extends JFrame
         scrollPane1.setLineNumbersEnabled(true);
         scrollPane1.setFoldIndicatorEnabled(true);
         scriptPanel.add(scrollPane1);
+    }
+
+    public void setCompilerLog(CompilationLog compilerLog)
+    {
+        this.compilerLog = compilerLog;
     }
 }

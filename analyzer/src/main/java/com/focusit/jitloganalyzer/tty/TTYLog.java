@@ -12,10 +12,10 @@ import com.focusit.jitloganalyzer.tty.model.*;
  */
 public class TTYLog
 {
-    public Map<Class, Set<String>> attrsByType = new HashMap<>();
+    public Map<Class, Set<String>> eventAttributes = new HashMap<>();
     public List<TTYEvent> events = new ArrayList<>();
     public List<ClassLoadEvent> classLoading = new ArrayList<>();
-    public HashMap<Long, List<TTYEvent>> jitCompilations = new HashMap<>();
+    public HashMap<Long, List<TTYEvent>> queued_tasks = new HashMap<>();
     public List<SweeperEvent> sweeping = new ArrayList<>();
     public HashMap<String, List<Long>> methodCompilations = new HashMap<>();
     private boolean started = false;
@@ -37,8 +37,8 @@ public class TTYLog
     public void parseLog(String filename) throws IOException
     {
         events.clear();
-        attrsByType.clear();
-        try (BufferedReader br = new BufferedReader(new FileReader(filename)))
+        eventAttributes.clear();
+        try (BufferedReader br = new BufferedReader(new FileReader(filename), 64 * 1024 * 1024))
         {
             TTYEvent prevEvent = null;
             for (String line; (line = br.readLine()) != null;)
@@ -60,11 +60,11 @@ public class TTYLog
                     }
                     if (event instanceof AbstractTTYEvent)
                     {
-                        Set<String> attrs = attrsByType.get(event.getClass());
+                        Set<String> attrs = eventAttributes.get(event.getClass());
                         if (attrs == null)
                         {
                             attrs = new HashSet<>();
-                            attrsByType.put(event.getClass(), attrs);
+                            eventAttributes.put(event.getClass(), attrs);
                         }
                         attrs.addAll(((AbstractTTYEvent)event).getAttributes(line).keySet());
                     }
@@ -96,17 +96,17 @@ public class TTYLog
 
     public void fillJitCompilations()
     {
-        jitCompilations.clear();
+        queued_tasks.clear();
         events.forEach(event -> {
             if (event instanceof NMethodEvent || event instanceof TaskQueuedEvent || event instanceof UncommonTrapEvent
                     || event instanceof MakeNotEntrantEvent)
             {
                 HasCompileId hci = (HasCompileId)event;
-                if (jitCompilations.get(hci.getCompileId()) == null)
+                if (queued_tasks.get(hci.getCompileId()) == null)
                 {
-                    jitCompilations.put(hci.getCompileId(), new ArrayList<>());
+                    queued_tasks.put(hci.getCompileId(), new ArrayList<>());
                 }
-                List<TTYEvent> compilationEvents = jitCompilations.get(hci.getCompileId());
+                List<TTYEvent> compilationEvents = queued_tasks.get(hci.getCompileId());
                 compilationEvents.add(event);
                 compilationEvents.sort(ttyEventComparatorByStampAsc);
             }
