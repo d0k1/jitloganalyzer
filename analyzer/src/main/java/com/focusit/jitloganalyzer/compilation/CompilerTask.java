@@ -1,5 +1,7 @@
 package com.focusit.jitloganalyzer.compilation;
 
+import java.util.List;
+
 import com.focusit.jitloganalyzer.tty.model.HasCompileId;
 
 /**
@@ -7,5 +9,7 @@ import com.focusit.jitloganalyzer.tty.model.HasCompileId;
  */
 public interface CompilerTask extends HasCompileId
 {
-    String getContent();
+    String toString();
+
+    List<String> getContent();
 }

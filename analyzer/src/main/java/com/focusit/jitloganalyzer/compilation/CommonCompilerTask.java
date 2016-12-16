@@ -1,6 +1,8 @@
 package com.focusit.jitloganalyzer.compilation;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -14,16 +16,14 @@ import groovy.util.slurpersupport.GPathResult;
 public class CommonCompilerTask implements CompilerTask
 {
     private long compileId;
-    private String content;
+    private List<String> content;
     private GPathResult xml;
 
-    public CommonCompilerTask(long compileId, String content)
+    public CommonCompilerTask(long compileId, List<String> content)
             throws ParserConfigurationException, SAXException, IOException
     {
         this.compileId = compileId;
-        this.content = content;
-        //        XmlSlurper xmlSlurper = new XmlSlurper(false, false);
-        //        xml = xmlSlurper.parseText(content);
+        this.content = new ArrayList<>(content);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class CommonCompilerTask implements CompilerTask
     }
 
     @Override
-    public String getContent()
+    public List<String> getContent()
     {
         return content;
     }
@@ -41,5 +41,14 @@ public class CommonCompilerTask implements CompilerTask
     public GPathResult getXml()
     {
         return xml;
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder();
+        content.forEach(line -> builder.append(line).append("\n"));
+
+        return builder.toString();
     }
 }

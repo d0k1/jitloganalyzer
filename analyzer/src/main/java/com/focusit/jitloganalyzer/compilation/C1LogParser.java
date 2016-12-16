@@ -22,8 +22,6 @@ public class C1LogParser implements CompilerParser
     public CompilerTask getCompilerTask(long compileId, List<String> content)
             throws ParserConfigurationException, SAXException, IOException
     {
-        StringBuilder builder = new StringBuilder();
-        content.forEach(line -> builder.append(line).append("\n"));
-        return new C1CompilerTask(compileId, builder.toString());
+        return new C1CompilerTask(compileId, content);
     }
 }
